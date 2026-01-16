@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getTouristSpot } from "../../services/touristSpotService";
+import TouristCard from "./components/TouristCard";
 
 function Home() {
   const [touristSpot, setTouristSpot] = useState([]);
@@ -25,7 +26,14 @@ function Home() {
   function handleSearchChange(e) {
     setTextSearch(e.target.value);
   }
-
+  function handleTagClick(tag) {
+    const newTextSearch = textSearch;
+    if (newTextSearch.includes(tag)) {
+      setTextSearch(newTextSearch.replace(tag, "").trim());
+    } else {
+      setTextSearch((newTextSearch + " " + tag).trim());
+    }
+  }
   const copyToClipboard = (text) => {
     console.log("text", text);
     var textField = document.createElement("textarea");
@@ -72,94 +80,16 @@ function Home() {
         ) : (
           <div className="flex flex-col gap-6">
             {touristSpot.map((spot) => (
-              <div
+              <TouristCard
                 key={spot.id}
-                className="bg-white rounded-2xl shadow-sm border border-slate-100 p-5
-                           flex flex-col md:flex-row gap-5"
-              >
-                {/* Main image */}
-                <div className="w-full md:w-sm h-64 rounded-lg overflow-hidden cursor-pointer">
-                  <img
-                    src={spot.photos[0]}
-                    alt={spot.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover
-               transition-transform duration-300
-               hover:scale-110"
-                  />
-                </div>
-                {/* Content */}
-                <div className="flex flex-col gap-3 flex-1">
-                  <a
-                    className="text-xl font-medium text-slate-800"
-                    href={spot.url}
-                    target="_blank"
-                  >
-                    {spot.title}
-                  </a>
-
-                  <p className="text-slate-600 line-clamp-1">
-                    {spot.description}
-                  </p>
-
-                  <a
-                    href={spot.url}
-                    target="_blank"
-                    className="inline-block text-blue-600 text-sm font-medium
-                               hover:underline w-fit"
-                  >
-                    อ่านต่อ →
-                  </a>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2 text-sm">
-                    {spot.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Gallery */}
-                  <div className="flex gap-3 overflow-x-auto pt-2">
-                    {spot.photos.slice(1).map((img, index) => (
-                      <div
-                        key={index}
-                        className="w-28 h-20 rounded-lg overflow-hidden cursor-pointer"
-                        onClick={() => {
-                          setActiveImage(img);
-                          setIsOpen(true);
-                        }}
-                      >
-                        <img
-                          src={img}
-                          loading="lazy"
-                          alt={spot.title}
-                          className="w-full h-full object-cover
-                   transition-transform duration-300
-                   hover:scale-110"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  
-                  {/* Copy button */}
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      className="hover:bg-gray-200 p-2 rounded-[50%]"
-                      onClick={() => copyToClipboard(spot.url)}
-                    >
-                      <i class="fa-regular fa-copy"></i>
-                    </button>
-                  </div>
-
-
-                </div>
-              </div>
+                spot={spot}
+                onImageClick={(img) => {
+                  setActiveImage(img);
+                  setIsOpen(true);
+                }}
+                onTagClick={(tag) => handleTagClick(tag)}
+                onBtnCopy={(text) => copyToClipboard(text)}
+              />
             ))}
           </div>
         )}
