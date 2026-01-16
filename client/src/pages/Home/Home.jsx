@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getTouristSpot } from "../../services/touristSpotService";
 import TouristCard from "./components/TouristCard";
+import ImageModal from "./components/ImageMoal";
 
 function Home() {
   const [touristSpot, setTouristSpot] = useState([]);
@@ -45,7 +46,10 @@ function Home() {
   };
 
   useEffect(() => {
-    fetchData();
+    const delay = setTimeout(() => {
+      fetchData();
+    }, 300);
+    return () => clearTimeout(delay);
   }, [textSearch]);
 
   return (
@@ -88,7 +92,6 @@ function Home() {
                   setIsOpen(true);
                 }}
                 onTagClick={(tag) => handleTagClick(tag)}
-                onBtnCopy={(text) => copyToClipboard(text)}
               />
             ))}
           </div>
@@ -96,33 +99,7 @@ function Home() {
       </div>
 
       {/* Modal Gallery */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/70 z-50
-               flex items-center justify-center"
-          onClick={() => setIsOpen(false)}
-        >
-          <div
-            className="relative max-w-4xl w-full px-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Close button */}
-            <button
-              className="absolute -top-10 right-2 text-white text-2xl hover:text-blue-600"
-              onClick={() => setIsOpen(false)}
-            >
-              ✕
-            </button>
-
-            {/* Image */}
-            <img
-              src={activeImage}
-              alt="gallery"
-              className="w-full max-h-[80vh] object-contain rounded-xl"
-            />
-          </div>
-        </div>
-      )}
+      {isOpen && <ImageModal isClose={setIsOpen} activeImage={activeImage} />}
     </div>
   );
 }

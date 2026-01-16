@@ -1,27 +1,46 @@
 export default function TouristCard(props) {
-  const { spot, onImageClick, onTagClick,onBtnCopy } = props;
+  const { spot, onImageClick, onTagClick ,onBtnCopy} = props;
+
   return (
-    <div className="bg-white rounded-2xl shadow-sm border p-5 flex flex-col md:flex-row gap-5">
+    <article className="group bg-white rounded-2xl border shadow-sm hover:shadow-lg transition-all duration-300 p-5 flex flex-col md:flex-row gap-6">
+      
       {/* Main image */}
-      <div className="w-full md:w-64 h-64 rounded-lg overflow-hidden">
+      <div className="relative w-full md:w-72 h-64 rounded-xl overflow-hidden">
         <img
           src={spot.photos[0]}
           alt={spot.title}
           loading="lazy"
-          className="w-full h-full object-cover hover:scale-110 transition"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
+        {/* overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
       </div>
 
-      <div className="flex flex-col gap-3 flex-1">
+      {/* Content */}
+      <div className="flex flex-col gap-4 flex-1">
+        
+        {/* Title */}
         <a
           href={spot.url}
           target="_blank"
-          className="text-xl font-medium text-slate-800 hover:underline"
+          className="text-2xl font-semibold text-slate-800 leading-snug hover:text-blue-600 transition"
         >
           {spot.title}
         </a>
 
-        <p className="text-slate-600 line-clamp-1">{spot.description}</p>
+        {/* Description */}
+        <p className="text-slate-600 text-sm leading-relaxed line-clamp-2">
+          {spot.description}
+        </p>
+
+        {/* Read more */}
+        <a
+          href={spot.url}
+          target="_blank"
+          className="text-blue-600 text-sm font-medium hover:underline w-fit"
+        >
+          อ่านต่อ →
+        </a>
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2">
@@ -29,7 +48,7 @@ export default function TouristCard(props) {
             <button
               key={tag}
               onClick={() => onTagClick(tag)}
-              className="bg-slate-100 px-3 py-1 rounded-full text-sm"
+              className="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition"
             >
               #{tag}
             </button>
@@ -39,27 +58,32 @@ export default function TouristCard(props) {
         {/* Gallery */}
         <div className="flex gap-3 overflow-x-auto pt-2">
           {spot.photos.slice(1).map((img, i) => (
-            <img
+            <div
               key={i}
-              src={img}
-              loading="lazy"
               onClick={() => onImageClick(img)}
-              className="w-28 h-20 object-cover rounded-lg cursor-pointer overflow-hidden hover:scale-110 transition"
-            />
+              className="relative w-28 h-20 rounded-lg overflow-hidden cursor-pointer group/thumb"
+            >
+              <img
+                src={img}
+                loading="lazy"
+                className="w-full h-full object-cover transition-transform duration-300 group-hover/thumb:scale-110"
+              />
+              <div className="absolute inset-0 bg-black/10 opacity-0 group-hover/thumb:opacity-100 transition" />
+            </div>
           ))}
         </div>
 
-        {/* Copy */}
-        <div className="flex justify-end">
+        {/* Utility */}
+        <div className="flex justify-end pt-2">
           <button
             onClick={() => navigator.clipboard.writeText(spot.url)}
-            className="p-2 rounded-full hover:bg-slate-100"
+            className="p-2 rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition"
             title="คัดลอกลิงก์"
           >
             <i className="fa-regular fa-copy"></i>
           </button>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
